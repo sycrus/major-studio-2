@@ -28,7 +28,7 @@ public:
     ofPolyline                           shape;
     ofxBox2d                             box2d;
     vector <shared_ptr<ofxBox2dCircle>>  circles;
-    //vector <shared_ptr<ofxBox2dEdge>>    edges;
+    vector <shared_ptr<ofxBox2dEdge>>    edges;
     vector <shared_ptr<ofxBox2dPolygon>> polyShapes;
 };
 

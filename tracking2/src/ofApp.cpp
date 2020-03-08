@@ -62,9 +62,17 @@ void ofApp::draw() {
     ofSetRectMode(OF_RECTMODE_CORNER);
     contourFinder.draw();
     
-    for(auto & poly : polyShapes) {
-        poly->draw();
-    }
+    ////Using <ofxBox2dPolygon>
+//    for(auto & poly : polyShapes) {
+//        poly->draw();
+//    }
+    
+    ////Using <ofxBox2dEdge>
+    ////Using <ofxBox2dPolygon>
+        for(auto & edge : edges) {
+            edge->draw();
+        }
+        
     
     gui.draw();
     
@@ -96,18 +104,42 @@ void ofApp::keyPressed(int key) {
     }
     
     if(key == 'x') {
-        for(int i = 0; i < contourFinder.size(); i++) {
-            ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
-            shape.addVertices(convexHull.getVertices());
-            shape.simplify();
-            
-            auto poly = std::make_shared<ofxBox2dPolygon>();
-            //poly->addVertices(shape.getVertices());
-            poly->addVertices(convexHull.getVertices());
-            poly->create(box2d.getWorld());
-            polyShapes.push_back(poly);
-            shape.clear();
-        }
+        ////Using <ofxBox2dPolygon>
+//        for(int i = 0; i < contourFinder.size(); i++) {
+//            ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
+//            shape.addVertices(convexHull.getVertices());
+//            shape.simplify();
+//
+//            auto poly = std::make_shared<ofxBox2dPolygon>();
+//            //poly->addVertices(shape.getVertices());
+//            poly->addVertices(convexHull.getVertices());
+//            poly->create(box2d.getWorld());
+//            polyShapes.push_back(poly);
+//            shape.clear();
+//        }
+        ////Using <ofxBox2dEdges> WORKS
+//            for (int i=0; i < contourFinder.size(); i++) {
+//                auto edge = make_shared<ofxBox2dEdge>();
+//                 ofPolyline convexHull = toOf(contourFinder.getConvexHull(i));
+//                 //shape.addVertices(convexHull.getVertices());
+//                for (int j = 0; j < convexHull.getVertices().size() ; j++) {
+//                    auto pts = convexHull.getVertices();
+//                    edge->addVertex(pts[j]);
+//                }
+//                edge->create(box2d.getWorld());
+//                edges.push_back(edge);
+//            }
+        
+            for (int i=0; i < contourFinder.size(); i++) {
+                auto edge = make_shared<ofxBox2dEdge>();
+                ofPolyline contourPolyline = contourFinder.getPolyline(i);
+                for (int j = 0; j < contourPolyline.getVertices().size() ; j++) {
+                    auto pts = contourPolyline.getVertices();
+                    edge->addVertex(pts[j]);
+                }
+                edge->create(box2d.getWorld());
+                edges.push_back(edge);
+            }
     }
     
     if (key == OF_KEY_LEFT) {
@@ -118,8 +150,7 @@ void ofApp::keyPressed(int key) {
     }
     
     if(key == 'c') {
-        shape.clear();
-        polyShapes.clear();
+        edges.clear();
         circles.clear();
     }
     
